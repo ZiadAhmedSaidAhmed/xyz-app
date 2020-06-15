@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreMotion
 
 class ViewController: UIViewController {
 
@@ -14,11 +15,29 @@ class ViewController: UIViewController {
     @IBOutlet weak var yLabel: UILabel!
     @IBOutlet weak var zLabel: UILabel!
     
+    var motionManager: CMMotionManager!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates(to: .main, withHandler: updateLabels)
     }
 
+    func updateLabels(data: CMAccelerometerData?, error: Error?) {
+        guard let accelerometerData = data else { return }
+        
+        let numberFormatter = NumberFormatter()
+        numberFormatter.minimumFractionDigits = 1
+        numberFormatter.maximumFractionDigits = 1
+        
+        let x = numberFormatter.string(for: accelerometerData.acceleration.x)!
+        let y = numberFormatter.string(for: accelerometerData.acceleration.y)!
+        let z = numberFormatter.string(for: accelerometerData.acceleration.z)!
+        
+        xLabel.text = "X: \(x)"
+        yLabel.text = "Y: \(y)"
+        zLabel.text = "Z: \(z)"
+    }
 
 }
 
